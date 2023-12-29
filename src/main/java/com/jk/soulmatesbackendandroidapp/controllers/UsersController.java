@@ -1,20 +1,24 @@
 package com.jk.soulmatesbackendandroidapp.controllers;
 
+import com.github.javafaker.Faker;
+import com.jk.soulmatesbackendandroidapp.models.Users;
+import com.jk.soulmatesbackendandroidapp.repositories.UsersRepository;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
+import java.sql.Timestamp;
+
 
 /**
  * Api for user creation.
@@ -26,6 +30,20 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
+
+    private final UsersRepository usersRepository;
+    private final Faker faker;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    Logger logger = LoggerFactory.getLogger(UsersController.class);
+
+    public UsersController(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.usersRepository = usersRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.faker = new Faker();
+    }
+
 
     /**
      * This endpoint creates users.
@@ -40,15 +58,15 @@ public class UsersController {
     @PostMapping("/createAll")
     private void insertUsers() throws IOException {
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 1000; i++) {
             HttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-            HttpGet request = new HttpGet("https://picsum.photos/300/300?random");
+            HttpGet request = new HttpGet("https://picsum.photos/400/400?random");
             HttpResponse response = httpClient.execute(request);
-            System.out.println(response.getEntity());
             byte[] imageBytes = EntityUtils.toByteArray(response.getEntity());
-            System.out.println(Arrays.toString(imageBytes));
-            Path imagePath = Path.of("C:\\Users\\USER\\Desktop\\" + i + ".jpg");
-            Files.write(imagePath, imageBytes, StandardOpenOption.CREATE);
+            usersRepository.save(new Users(faker.name().firstName(), faker.name().lastName(), faker.country().name(), imageBytes, null,
+                    faker.name().username(), bCryptPasswordEncoder.encode(faker.internet().password()), true, false,
+                    new Timestamp(System.currentTimeMillis())));
+            logger.info("Saving user: " + faker.name().firstName() + " " + faker.name().lastName() + " " + faker.country().name() + faker.name().username() + " " + faker.internet().password());
         }
     }
 }

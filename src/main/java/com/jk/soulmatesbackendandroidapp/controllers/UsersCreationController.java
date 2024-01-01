@@ -28,17 +28,17 @@ import java.sql.Timestamp;
  * @since 19-12-2023
  */
 @RestController
-@RequestMapping("/api/users")
-public class UsersController {
+@RequestMapping("/api/usersCreation")
+public class UsersCreationController {
 
     private final UsersRepository usersRepository;
     private final Faker faker;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    Logger logger = LoggerFactory.getLogger(UsersController.class);
+    Logger logger = LoggerFactory.getLogger(UsersCreationController.class);
 
-    public UsersController(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UsersCreationController(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.usersRepository = usersRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.faker = new Faker();
@@ -47,16 +47,16 @@ public class UsersController {
 
     /**
      * This endpoint creates users.
-     * We call the uri "<a href="https://picsum.photos/300/300?random">...</a>" to get the images for the users.
-     * It returns random images with the sizes of 300/300 as we declared.
+     * We call the uri "<a href="https://picsum.photos/400/400?random">...</a>" to get the images for the users.
+     * It returns random images with the sizes of 400/400 as we declared.
      * Notice the initialization of the httpClient with the method setRedirectStrategy(new LaxRedirectStrategy()).build().
      * This happens since we need to redirect to get the actual image. --> try the url in a browser and you will understand.
      *
      * @author Jk
      * @since 19-12-2023
      */
-    @PostMapping("/createAll")
-    private void insertUsers() throws IOException {
+    @PostMapping("/create")
+    private void createUsers() throws IOException {
 
         for (int i = 0; i < 1000; i++) {
             HttpClient httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();

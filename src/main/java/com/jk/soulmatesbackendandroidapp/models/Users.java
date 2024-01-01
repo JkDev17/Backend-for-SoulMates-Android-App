@@ -26,11 +26,6 @@ public class Users {
     private final String password;
     private final boolean isActive;
     private final boolean isPremiumMember;
-
-    public Timestamp getTokenTimeCreated() {
-        return tokenTimeCreated;
-    }
-
     private final Timestamp tokenTimeCreated;
 
 
@@ -45,6 +40,10 @@ public class Users {
         this.isActive = isActive;
         this.isPremiumMember = isPremiumMember;
         this.tokenTimeCreated = tokenTimeCreated;
+    }
+
+    public Timestamp getTokenTimeCreated() {
+        return tokenTimeCreated;
     }
 
     public String getFirstName() {
@@ -82,6 +81,7 @@ public class Users {
     public boolean isPremiumMember() {
         return isPremiumMember;
     }
+
     @Override
     public String toString() {
         return "Users{" +
